@@ -24,7 +24,28 @@ export function Login() {
       setError('Le mot de passe doit contenir au moins 6 caractères');
       return;
     }
-
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+    
+      if (error) throw error;
+      
+      // Récupérer les informations de l'utilisateur connecté
+      const { data: userData } = await supabase.auth.getUser();
+      
+      // Mettre à jour le store avec les informations de l'utilisateur
+      setUser(userData.user);
+      
+      // Rediriger vers la page d'accueil
+      navigate('/');
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
     setLoading(true);
 
     try {
@@ -64,7 +85,35 @@ export function Login() {
       if (!userData) {
         throw new Error('Données utilisateur introuvables');
       }
+// Vers la fin de la fonction handleSubmit, après les validations :
+try {
+  setLoading(true);
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
 
+  if (error) throw error;
+  
+  // Si la connexion réussit, nous devons récupérer les infos de l'utilisateur
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+  
+  if (userError) throw userError;
+  
+  // Mettre à jour le store
+  setUser(userData);
+  
+  // Rediriger vers la page d'accueil
+  navigate('/');
+} catch (err) {
+  setError(err.message);
+} finally {
+  setLoading(false);
+}
       // Mise à jour du store avec les données utilisateur
       setUser({
         id: userData.id,
@@ -76,7 +125,14 @@ export function Login() {
         phone: userData.phone,
         created_at: userData.created_at,
       });
-      
+      // Mise à jour du store avec les données utilisateur
+setUser(userData);
+
+// Log pour déboguer
+console.log('Utilisateur connecté avec succès:', userData);
+
+// Rediriger vers la page d'accueil
+navigate('/');
       navigate('/');
     } catch (err) {
       console.error('Login error:', err);

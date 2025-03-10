@@ -20,8 +20,9 @@ const devUser: User = {
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
-  // En développement, on initialise avec l'utilisateur de test
+  // Utilisateur de développement activé
   user: devUser,
   isAuthenticated: true,
+  
   setUser: (user) => set({ user, isAuthenticated: !!user }),
 }));
