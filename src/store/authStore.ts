@@ -18,7 +18,6 @@ const devUser: User = {
   phone: '+1234567890',
   created_at: new Date().toISOString(),
 };
-
 export const useAuthStore = create<AuthState>((set) => ({
   // Utilisateur de développement activé
   user: devUser,
